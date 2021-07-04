@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const hdb = require("express-handlebars");
 const dbDatosPersonales = require("./db-datospersonales");
+const utils = require("./utils");
 
 const datos = [];
 
@@ -19,13 +20,14 @@ app.use(express.static(path.join(__dirname, "client")));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-    res.render("reparaciones")
-});
+    dbDatosPersonales.leerDatos(datos, (err) => res.render("error", { content: "ERRoR"}), (datos) => res.render("reparaciones", {
+        datos: utils.dbDatos(datos)
+    }))});
 
-app.get("/reparaciones", (req, res) => {
-    res.render("reparaciones")});
+//app.get("/datosdb", (req, res) => {
 
-app.post("/reparaciones", function(req, res) {
+
+app.post("/agregar-reparaciones", function(req, res) {
         
     let fecha = req.body.fecha;
     let nombre =req.body.nombre;
@@ -38,19 +40,22 @@ app.post("/reparaciones", function(req, res) {
     let estado = req.body.estado
   
     let datos = {
+        "fecha": fecha,
         "name": nombre,
+        "marca": marca,
+        "modelo": modelo,
         "email":email,
+        "tel": tel,
         "problema":problema,
-        "costo":costo
+        "costo":costo,
+        "estado": estado
     }
         
-        
-        console.log(email);
         console.log(datos);
 
         dbDatosPersonales.insertarDatos(datos,
              (err) => { res.render("error", {error: "NO INSERTO NADA"})},
-             () => {res.redirect("/main")});
+             () => {res.redirect("/")});
         
 })
 

@@ -20,11 +20,35 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, conok) => {
         return;
       }
       conok.close();
-      cbOk;
+      cbOk();
       });
     });
 };
 
+const leerDatos = (datos, cbErr, cbOk) => {
+  MongoClient.connect(url, { useUnifiedTopology: true }, (err, conok) => {
+      if(err) {
+          cbErr(err);
+          console.log(err)
+          return;
+      };
+  
+      const datospersonalesBase = conok.db(dataBase).collection(collectionName);
+      
+      datospersonalesBase.find({}).toArray((err, res) => {
+        if(err){
+          cbErr(err);
+          console.log(err)
+          return;
+        }
+        console.log(res);
+        conok.close();
+        cbOk(res);
+        });
+      });
+  }; 
+
 module.exports = {
   insertarDatos,
+  leerDatos
 };
