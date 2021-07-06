@@ -25,7 +25,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, conok) => {
     });
 };
 
-const leerDatos = (datos, cbErr, cbOk) => {
+const leerDatos = (cbErr, cbOk) => {
   MongoClient.connect(url, { useUnifiedTopology: true }, (err, conok) => {
       if(err) {
           cbErr(err);

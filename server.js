@@ -3,9 +3,6 @@ const app = express();
 const path = require("path");
 const hdb = require("express-handlebars");
 const dbDatosPersonales = require("./db-datospersonales");
-const utils = require("./utils");
-
-const datos = [];
 
 
 app.engine("handlebars", hdb({
@@ -20,12 +17,14 @@ app.use(express.static(path.join(__dirname, "client")));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-    dbDatosPersonales.leerDatos(datos, (err) => res.render("error", { content: "ERRoR"}), (datos) => res.render("reparaciones", {
-        datos: utils.dbDatos(datos)
-    }))});
-
-//app.get("/datosdb", (req, res) => {
-
+    dbDatosPersonales.leerDatos(
+        err => res.render("error", { content: "ERRoR"}), 
+        datos => res.render("reparaciones", {
+            datos: datos,
+            encodedJson : encodeURIComponent(JSON.stringify(datos))
+        })
+        )});
+        
 
 app.post("/agregar-reparaciones", function(req, res) {
         
@@ -51,16 +50,11 @@ app.post("/agregar-reparaciones", function(req, res) {
         "estado": estado
     }
         
-        console.log(datos);
-
         dbDatosPersonales.insertarDatos(datos,
-             (err) => { res.render("error", {error: "NO INSERTO NADA"})},
-             () => {res.redirect("/")});
+        (err) => { res.render("error", {error: "NO INSERTO NADA"})},
+        () => {res.redirect("/")});
         
-})
-
-
-    
+})    
 
 app.listen(3500, () => {
     console.log("Servidor ON")
