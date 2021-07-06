@@ -2,9 +2,9 @@
 </nav>
 
 <body>
-    <div class="container" id="advanced-search-form">
+    <div class="container" id="advanced-search-form" style="color:wheat">
         <h2>Nueva Orden</h2>
-        <form action="/agregar-reparaciones" method="POST">
+        <form class="was-validated" action="/agregar-reparaciones" method="POST">
             <div class="row">
                 <div class="col">
                     <div class="form-group">
@@ -80,8 +80,8 @@
         </form>
     </div>
     <hr>
-    <table class="table table-bordered table-hover">
-        <thead>
+    <table class="table table-sm table-dark table-bordered table-responsive table-hover">
+        <thead align="center">
             <tr>
                 <th>ID</th>
                 <th>Fecha</th>
@@ -93,17 +93,17 @@
                 <th>Operacion</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody align="center">
             {{#each datos}}
             <tr>
                 <td>{{this._id}}</td>
                 <td>{{this.fecha}}</td>
-                <td>{{this.nombre}}</td>
+                <td>{{this.name}}</td>
                 <td>{{this.modelo}}</td>
                 <td>{{this.problema}}</td>
                 <td>{{this.costo}}</td>
                 <td>{{this.estado}}</td>
-                <td><button id={{this._id}} type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Editar</button></td>
+                <td><button id={{this._id}} type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Editar</button> <button id={{this._id}} type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal2">Eliminar</button></td>
             </tr>
             {{/each}}
         </tbody>
@@ -113,16 +113,38 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input id="selectedTurno" placeholder="Costo">
-                    <input id="selectedEstado" placeholder="Estado">
+                    <input id="selectedCosto" placeholder="Costo" name="costo">
+                    <input id="selectedEstado" placeholder="Estado" name="estado">
+                    <input id="selectedId" type="hidden" name="id">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="save-turno">Save changes</button>
+                    <input type="submit" class="btn btn-primary" id="save-cambios"value="Save changes"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+    <form action="/eliminarDatos" method="POST">
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">¡Atención!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estas seguro de eliminar al cliente?</p>
+                    <input id="eliminarId" type="hidden" name="id">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">NO</button>
+                    <input type="submit" class="btn btn-primary" id="eliminar-datos"value="Si"/>
                 </div>
             </div>
         </div>
@@ -130,26 +152,33 @@
     </form>
     <script>
         let decodedJson = decodeURIComponent("{{{encodedJson}}}");
-        console.log(decodedJson);
         let jsonObj = JSON.parse(decodedJson);
-        console.log("ARRAY", jsonObj);
-        const inputSelectedTurno = document.getElementById('selectedTurno');
+        const inputSelectedCosto = document.getElementById('selectedCosto');
         const inputEstado = document.getElementById('selectedEstado');
-        const btnSaveChanges = document.getElementById('save-turno');
-
+        const inputId = document.getElementById("selectedId");
+        const eliminarId = document.getElementById("eliminarId");
         
-        jsonObj.forEach(function(turno){
+        
+        jsonObj.forEach(function(turno, id){
             const boton = document.getElementById(turno._id);
+            console.log("funcion", turno);
             boton.addEventListener("click", function() {
-                inputSelectedTurno.value = turno.costo;
+                inputSelectedCosto.value = turno.costo;
                 inputEstado.value = turno.estado;
-                console.log("linea137", boton);
-            })
+                inputId.value = turno._id;
+                console.log(inputSelectedCosto.value);
+                console.log(inputEstado.value);
+                console.log(inputId.value);
+          });
+          boton.addEventListener("click", function() {
+                eliminarId.value = turno._id;
+                console.log(eliminarId.value);
+
+          })
         });
 
-            btnSaveChanges.addEventListener("click", function(){
-                console.log(jsonObj);
-            })
+        
+              
         
     </script>
 </body>
